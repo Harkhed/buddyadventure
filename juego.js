@@ -13,25 +13,55 @@ const flechade = document.getElementById("flechaderecha");
 flechade.style.display = "none";
 flechaiz.style.display = "none";
 
+/*audio*/
+const menu = document.getElementById("menuz");
+const parte1 = document.getElementById("parte1");
+const parte2 = document.getElementById("parte2");
+const flecha = document.getElementById("flecha");
+const scorez = document.getElementById("scorez");
+
+menu.volume = 0.2;
+
+parte1.volume = 0.3;
+parte2.volume = 0.3;
+scorez.volume = 0.1;
+
+parte1.pause();
+parte2.pause();
+
+
 var obstaculo;
 var dejar = true;
 /*objetos*/
 const personaje = document.getElementById("personaje");
 const suelo = document.getElementById("suelo");
 
+const nube1 = document.getElementById("nube");
+const nube2 = document.getElementById("nube2");
+
+
+
+/*Añadir color al fondo*/
+fondo.style.background = "linear-gradient(to bottom, #87CEEB, #FFFFFF)";   
+
 /*empezar*/
+    
+suelo.style.display = "flex";
 
 function iniciar(){
-    
+    menu.pause();
+    menu.currentTime = 0;
+    parte1.play()
     /*deshabilita los botones*/
     empezar.style.display = "none";
     selector.style.display = "none";
     titulo.style.display = "none";
 
+    nube1.style.display = "none";
+    nube2.style.display = "none";
     
 
-    /*Añadir color al fondo*/
-    fondo.style.background = "linear-gradient(to bottom, #87CEEB, #FFFFFF)";
+
 
     score.style.display = "flex";
 
@@ -73,7 +103,7 @@ function iniciar(){
         requestAnimationFrame(Loop);
     }
 
-    var sueloY = -20;
+    
     var velY = 0;
     var impulso = 1000;
     var gravedad = 2500;
@@ -107,6 +137,7 @@ function iniciar(){
 
 
     dejar = true;
+
 
     /*tecla presionada*/
     document.addEventListener("keydown",teclapresionada);
@@ -225,10 +256,87 @@ function iniciar(){
     }
 
     function crearobstaculo(){
-        if(dejar){
+        if(dejar && puntos <3){
             obstaculo = document.createElement("div");
+            
+            
+            obstaculo.classList.add("arbol");
+            
             container.appendChild(obstaculo);
+            
+           
+            
+
+            obstaculo.posX = container.clientWidth;
+            obstaculo.style.left = container.clientWidth;
+    
+            obstaculos.push(obstaculo);
+            tiempohastaobstaculo = tiempoobstaculomin + Math.random() * (tiempoobstaculomax-tiempoobstaculomin) / gamevel;
+        }
+        else{
+            crearobstaculo2();
+        }
+    }
+
+    function crearobstaculo2(){
+        if(dejar && puntos >3 && puntos < 10){
+            obstaculo = document.createElement("div");
+            
+            
             obstaculo.classList.add("sombra");
+            
+            container.appendChild(obstaculo);
+            
+           
+            
+
+            obstaculo.posX = container.clientWidth;
+            obstaculo.style.left = container.clientWidth;
+    
+            obstaculos.push(obstaculo);
+            tiempohastaobstaculo = tiempoobstaculomin + Math.random() * (tiempoobstaculomax-tiempoobstaculomin) / gamevel;
+        }
+        else{
+            crearobstaculo3();
+        }
+        
+        
+    }
+
+    function crearobstaculo3(){
+        if(dejar && puntos >10 && puntos < 20){
+            obstaculo = document.createElement("div");
+            
+            
+            obstaculo.classList.add("arbolconcara");
+            
+            container.appendChild(obstaculo);
+            
+           
+            
+
+            obstaculo.posX = container.clientWidth;
+            obstaculo.style.left = container.clientWidth;
+    
+            obstaculos.push(obstaculo);
+            tiempohastaobstaculo = tiempoobstaculomin + Math.random() * (tiempoobstaculomax-tiempoobstaculomin) / gamevel;
+        }
+        else{
+            crearobstaculo4();
+        }
+    }
+
+    function crearobstaculo4(){
+        if(dejar && puntos >= 20){
+            obstaculo = document.createElement("div");
+            
+            
+            obstaculo.classList.add("arbolconcaramorado");
+            
+            container.appendChild(obstaculo);
+            
+           
+            
 
             obstaculo.posX = container.clientWidth;
             obstaculo.style.left = container.clientWidth;
@@ -239,7 +347,7 @@ function iniciar(){
     }
 
     function CrearNube(){
-        if(dejar){
+        if(dejar && puntos < 20){
             nube = document.createElement("div");
             container.appendChild(nube);
             nube.classList.add("nube");
@@ -250,7 +358,24 @@ function iniciar(){
             nubes.push(nube);
             tiempoHastaNube = tiempoNubeMin + Math.random() * (tiempoNubeMax-tiempoNubeMin) / gamevel;
         }
+        else{
+            crearnube2();
+        }
 
+    }
+
+    function crearnube2(){
+        if(dejar && puntos >= 20){
+            nube = document.createElement("div");
+            container.appendChild(nube);
+            nube.classList.add("nubecolormorada");
+            nube.posX = container.clientWidth;
+            nube.style.left = container.clientWidth+"px";
+            nube.style.bottom = minNubeY + Math.random() * (maxNubeY-minNubeY)+"px";
+            
+            nubes.push(nube);
+            tiempoHastaNube = tiempoNubeMin + Math.random() * (tiempoNubeMax-tiempoNubeMin) / gamevel;
+        }
     }
 
     function moverobstaculo(){
@@ -281,6 +406,24 @@ function iniciar(){
     function Ganarscore(){
         puntos++
         score.textContent = puntos;
+        scorez.play();
+
+        /*Comprueba cuanto score hay*/
+        if(puntos >= 10 && puntos < 20){
+            gamevel = 1.5;
+            fondo.style.background = "linear-gradient(to bottom, #ff7f00, #ffff00)";
+        }
+        if(puntos >= 20){
+            parte1.pause();
+            parte1.currentTime = 0;
+            parte2.play();
+            gamevel = 2.0;
+            
+            fondo.style.background = "linear-gradient(to bottom, #4b0082, #b19cd9)";
+        }
+        if(puntos >=3 && puntos < 10 ){
+            gamevel = 1.2;
+        }
     }
 
     /*Detecta la colision*/
@@ -296,6 +439,8 @@ function iniciar(){
         }
     }
 
+    
+    /*Funcion para ajustar de una mejor manera la colision talvez por algun diseño raro*/
     function iscollision(a, b, paddingTop, paddingRight, paddingBottom, paddingLeft) {
         var aRect = a.getBoundingClientRect();
         var bRect = b.getBoundingClientRect();
@@ -330,6 +475,7 @@ perdiste.addEventListener("click",reiniciarJuego);
 
 /*personaje*/
 selector.addEventListener("click",function(){
+    flecha.play();
     /*deshabilita los botones*/
     empezar.style.display = "none";
     selector.style.display = "none";
@@ -359,7 +505,13 @@ selector.addEventListener("click",function(){
 
 
 function reiniciarJuego() {
-  
+    flecha.play();
+    menu.play();
+    parte1.pause();
+    parte2.pause();
+    parte1.currentTime = 0;
+    parte2.currentTime = 0;
+
     empezar.style.display = "flex";
     selector.style.display = "flex";
     titulo.style.display = "flex";
@@ -370,9 +522,12 @@ function reiniciarJuego() {
 
     /* ocultar elementos del juego */
     personaje.style.display = "none";
-    suelo.style.display = "none";
+    suelo.style.display = "display";
     score.style.display = "none";
     perdiste.style.display = "none";
+
+    nube1.style.display = "flex";
+    nube2.style.display = "flex";
 
     /* reiniciar variables del juego */
     obstaculo = null;
@@ -404,10 +559,11 @@ function reiniciarJuego() {
 
 
 volver.addEventListener("click",function(e){
+    flecha.play();
     empezar.style.display = "flex";
     selector.style.display = "flex";
     titulo.style.display = "flex";
-    titulo.textContent = "BUDDY RUNNER";
+    titulo.textContent = "BUDDY ADVENTURE";
     volver.style.display = "none";
 
     flechade.style.display = "none";
@@ -435,7 +591,8 @@ personaje.style.backgroundImage = `url(${skins[indiceSkin]})`;
 flechaiz.addEventListener("click", function() {
     // Cambiar el estilo de fondo del personaje con el siguiente skin
     personaje.style.backgroundImage = `url(${skins[indiceSkin]})`;
-    
+    /*audio*/
+    flecha.play();
     // Incrementar el índice para el siguiente skin
     indiceSkin++;
     
@@ -448,7 +605,7 @@ flechaiz.addEventListener("click", function() {
 
 /*lo mismo que la otra flecha*/
 flechade.addEventListener("click", function() {
-    
+    flecha.play();
     personaje.style.backgroundImage = `url(${skins[indiceSkin]})`;
     
     
